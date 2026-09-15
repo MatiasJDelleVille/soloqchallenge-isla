@@ -465,6 +465,13 @@ export async function getAccountByRiotIdTft(
   return getAccountByRiotId(gameName, tagLine, platform, tftApiKey());
 }
 
+export async function getTftSummonerProfile(puuid: string, platform: string) {
+  return (await riotFetch(
+    `https://${platform}.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/${puuid}`,
+    tftApiKey()
+  )) as { profileIconId: number };
+}
+
 export async function getTftRankedEntries(puuid: string, platform: string) {
   const entries = (await riotFetch(
     `https://${platform}.api.riotgames.com/tft/league/v1/by-puuid/${puuid}`,

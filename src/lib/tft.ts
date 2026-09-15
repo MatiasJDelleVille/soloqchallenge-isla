@@ -66,6 +66,8 @@ export type TftStats = {
   ranked: TftRanked | null;
   summary: TftSummary;
   matches: TftMatch[];
+  profileIconId: number;
+  ddragonVersion: string;
 } | null;
 
 const PLATFORM_TO_METATFT: Record<string, string> = {

@@ -53,12 +53,24 @@ export default function TftPlayerRow({
       >
         <td className="px-4 py-3 text-white/40 font-mono">{rank}</td>
         <td className="px-4 py-3">
-          <p className="text-white font-semibold whitespace-nowrap">
-            {player.game_name}
-            <span className="text-white/40">#{player.tag_line}</span>
-          </p>
-          {loading && <p className="text-sm text-white/40">Cargando...</p>}
-          {error && <p className="text-sm text-red-400">{error}</p>}
+          <div className="flex items-center gap-3">
+            {stats?.profileIconId != null && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={`https://ddragon.leagueoflegends.com/cdn/${stats.ddragonVersion}/img/profileicon/${stats.profileIconId}.png`}
+                alt=""
+                className="w-9 h-9 rounded-full border border-white/10 shrink-0"
+              />
+            )}
+            <div>
+              <p className="text-white font-semibold whitespace-nowrap">
+                {player.game_name}
+                <span className="text-white/40">#{player.tag_line}</span>
+              </p>
+              {loading && <p className="text-sm text-white/40">Cargando...</p>}
+              {error && <p className="text-sm text-red-400">{error}</p>}
+            </div>
+          </div>
         </td>
         <td className="px-4 py-3 text-white/70 whitespace-nowrap">
           {ranked

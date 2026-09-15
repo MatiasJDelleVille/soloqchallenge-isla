@@ -34,6 +34,17 @@ export default function TftPlayerCardMobile({
       <div onClick={onToggle} className="flex items-center gap-3 p-4 cursor-pointer">
         <span className="text-white/40 font-mono w-5 shrink-0">{rank}</span>
 
+        {stats?.profileIconId ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`https://ddragon.leagueoflegends.com/cdn/${stats.ddragonVersion}/img/profileicon/${stats.profileIconId}.png`}
+            alt=""
+            className="w-10 h-10 rounded-full border border-white/10 shrink-0"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-white/10 shrink-0" />
+        )}
+
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold truncate">
             {player.game_name}

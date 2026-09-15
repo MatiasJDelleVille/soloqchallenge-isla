@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getTftRankedEntries, getTftRecentMatches } from "@/lib/riot";
+import {
+  getLatestDdragonVersion,
+  getTftRankedEntries,
+  getTftRecentMatches,
+  getTftSummonerProfile,
+} from "@/lib/riot";
 import { getCachedStats, setCachedStats, trackLpPerMatch } from "@/lib/kv";
 import { totalLp } from "@/lib/rank";
 import type { TftStats } from "@/lib/tft";
@@ -19,16 +24,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Faltan parámetros" }, { status: 400 });
   }
 
-  // v2: the response gained lobby data and a summary, so bodies cached under
-  // the old key would render as an empty match list until they expired.
-  const cacheKey = `tft-stats-cache:v2:${puuid}:${region}`;
+  // Bumped whenever the response shape grows, so stale bodies cached under the
+  // previous key (e.g. without profile icons) aren't served until they expire.
+  const cacheKey = `tft-stats-cache:v3:${puuid}:${region}`;
   const cached = await getCachedStats(cacheKey);
   if (cached) return NextResponse.json(cached);
 
   try {
-    const [ranked, recent] = await Promise.all([
+    const [ranked, recent, summoner, ddragonVersion] = await Promise.all([
       getTftRankedEntries(puuid, region),
       getTftRecentMatches(puuid, region),
+      getTftSummonerProfile(puuid, region),
+      getLatestDdragonVersion(),
     ]);
 
     // Only standard ranked LP can be attributed to the ranked matches shown;
@@ -49,6 +56,8 @@ export async function GET(req: NextRequest) {
 
     const responseBody: NonNullable<TftStats> = {
       ranked,
+      profileIconId: summoner.profileIconId,
+      ddragonVersion,
       summary: {
         games: recent.sampleSize,
         avgPlacement: recent.avgPlacement,
