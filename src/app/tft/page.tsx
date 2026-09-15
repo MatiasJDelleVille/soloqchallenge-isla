@@ -220,7 +220,7 @@ export default function TftHome() {
               Ordenar por elo
             </option>
             <option value="avgPlacement" className="bg-[#111827]">
-              Ordenar por posición prom.
+              Ordenar por AVG Placement
             </option>
           </select>
         </div>
@@ -262,7 +262,7 @@ export default function TftHome() {
                       onClick={() => handleSort("winrate")}
                     />
                     <SortHeader
-                      label="Pos. prom."
+                      label="AVG Placement"
                       active={sortKey === "avgPlacement"}
                       dir={sortDir}
                       onClick={() => handleSort("avgPlacement")}
@@ -271,7 +271,7 @@ export default function TftHome() {
                       LP hasta
                     </th>
                     <th className="px-4 py-3 text-left text-white/60 font-medium">
-                      DPM
+                      MetaTFT
                     </th>
                   </tr>
                 </thead>

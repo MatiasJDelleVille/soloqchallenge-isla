@@ -34,22 +34,42 @@ function placementColor(placement: number) {
   return "text-red-400";
 }
 
-function DpmBadge({ player }: { player: Player }) {
-  const dpmUrl = `https://dpm.lol/${encodeURIComponent(player.game_name)}-${encodeURIComponent(
-    player.tag_line
-  )}?queue=ranked`;
+// MetaTFT uses its own short region slugs instead of Riot's platform ids.
+const PLATFORM_TO_METATFT: Record<string, string> = {
+  na1: "na",
+  br1: "br",
+  la1: "lan",
+  la2: "las",
+  oc1: "oce",
+  euw1: "euw",
+  eun1: "eune",
+  tr1: "tr",
+  ru: "ru",
+  kr: "kr",
+  jp1: "jp",
+};
+
+function MetaTftBadge({ player }: { player: Player }) {
+  const region = PLATFORM_TO_METATFT[player.region] ?? player.region;
+  const metaTftUrl = `https://www.metatft.com/player/${region}/${encodeURIComponent(
+    player.game_name
+  )}-${encodeURIComponent(player.tag_line)}`;
 
   return (
     <a
-      href={dpmUrl}
+      href={metaTftUrl}
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => e.stopPropagation()}
-      title="Ver en DPM.lol"
+      title="Ver en MetaTFT"
       className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition shrink-0 p-1.5"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="https://dpm.lol/logo.png" alt="DPM.lol" className="w-full h-full object-contain" />
+      <img
+        src="https://www.metatft.com/myicon3.ico"
+        alt="MetaTFT"
+        className="w-full h-full object-contain"
+      />
     </a>
   );
 }
@@ -119,7 +139,7 @@ export default function TftPlayerRow({
           <LpGapBox {...lpGap} />
         </td>
         <td className="px-4 py-3">
-          <DpmBadge player={player} />
+          <MetaTftBadge player={player} />
         </td>
       </tr>
 
