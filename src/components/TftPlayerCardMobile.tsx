@@ -78,6 +78,12 @@ export default function TftPlayerCardMobile({
 
       {hasSummary && (
         <div className="flex items-center gap-4 px-4 pb-4 -mt-1 flex-wrap text-sm text-white/60">
+          {summary.avgPlacement !== null && (
+            <span>
+              AVG Placement{" "}
+              <span className="text-white font-bold">{summary.avgPlacement.toFixed(2)}</span>
+            </span>
+          )}
           {summary.top4Rate !== null && (
             <span>
               Top 4 <span className="text-white font-bold">{formatPercent(summary.top4Rate)}</span>
@@ -86,12 +92,6 @@ export default function TftPlayerCardMobile({
           {summary.winRate !== null && (
             <span>
               Win <span className="text-white font-bold">{formatPercent(summary.winRate)}</span>
-            </span>
-          )}
-          {summary.avgPlacement !== null && (
-            <span>
-              AVG Placement{" "}
-              <span className="text-white font-bold">{summary.avgPlacement.toFixed(2)}</span>
             </span>
           )}
         </div>

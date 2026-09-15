@@ -204,14 +204,14 @@ export default function TftHome() {
             <option value="elo" className="bg-[#111827]">
               Ordenar por elo
             </option>
+            <option value="avgPlacement" className="bg-[#111827]">
+              Ordenar por AVG Placement
+            </option>
             <option value="top4" className="bg-[#111827]">
               Ordenar por Top 4
             </option>
             <option value="win" className="bg-[#111827]">
               Ordenar por Win
-            </option>
-            <option value="avgPlacement" className="bg-[#111827]">
-              Ordenar por AVG Placement
             </option>
           </select>
         </div>
@@ -247,6 +247,12 @@ export default function TftHome() {
                       onClick={() => handleSort("elo")}
                     />
                     <SortHeader
+                      label="AVG Placement"
+                      active={sortKey === "avgPlacement"}
+                      dir={sortDir}
+                      onClick={() => handleSort("avgPlacement")}
+                    />
+                    <SortHeader
                       label="Top 4"
                       active={sortKey === "top4"}
                       dir={sortDir}
@@ -257,12 +263,6 @@ export default function TftHome() {
                       active={sortKey === "win"}
                       dir={sortDir}
                       onClick={() => handleSort("win")}
-                    />
-                    <SortHeader
-                      label="AVG Placement"
-                      active={sortKey === "avgPlacement"}
-                      dir={sortDir}
-                      onClick={() => handleSort("avgPlacement")}
                     />
                     <th className="px-4 py-3 text-left text-white/60 font-medium">
                       LP hasta

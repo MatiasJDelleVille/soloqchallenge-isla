@@ -80,6 +80,14 @@ export default function TftPlayerRow({
               : ""}
         </td>
         <td className="px-4 py-3 whitespace-nowrap">
+          {summary?.avgPlacement != null && (
+            <>
+              <span className="text-white font-bold">{summary.avgPlacement.toFixed(2)}</span>
+              <span className="ml-1.5 text-xs text-white/40">{summary.games} partidas</span>
+            </>
+          )}
+        </td>
+        <td className="px-4 py-3 whitespace-nowrap">
           {summary?.top4Rate != null && ranked && (
             <>
               <span className="text-white font-bold">{formatPercent(summary.top4Rate)}</span>
@@ -92,14 +100,6 @@ export default function TftPlayerRow({
         <td className="px-4 py-3 whitespace-nowrap">
           {summary?.winRate != null && (
             <span className="text-white font-bold">{formatPercent(summary.winRate)}</span>
-          )}
-        </td>
-        <td className="px-4 py-3 whitespace-nowrap">
-          {summary?.avgPlacement != null && (
-            <>
-              <span className="text-white font-bold">{summary.avgPlacement.toFixed(2)}</span>
-              <span className="ml-1.5 text-xs text-white/40">{summary.games} partidas</span>
-            </>
           )}
         </td>
         <td className="px-4 py-3">
