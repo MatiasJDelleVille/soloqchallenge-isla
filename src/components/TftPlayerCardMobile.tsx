@@ -97,7 +97,7 @@ export default function TftPlayerCardMobile({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://www.metatft.com/myicon3.ico"
+            src="https://www.metatft.com/logo.svg"
             alt="MetaTFT"
             className="w-full h-full object-contain"
           />
