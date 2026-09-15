@@ -267,7 +267,7 @@ export default function TftHome() {
                     <th className="px-4 py-3 text-left text-white/60 font-medium">
                       LP hasta
                     </th>
-                    <th className="px-4 py-3 text-left text-white/60 font-medium">
+                    <th className="px-4 py-3 text-center text-white/60 font-medium">
                       MetaTFT
                     </th>
                   </tr>

@@ -93,7 +93,7 @@ export default function TftPlayerRow({
         <td className="px-4 py-3">
           <LpGapBox {...lpGap} />
         </td>
-        <td className="px-4 py-3">
+        <td className="px-4 py-3 text-center">
           <MetaTftBadge player={player} />
         </td>
       </tr>
