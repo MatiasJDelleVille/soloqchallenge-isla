@@ -86,21 +86,23 @@ function TraitChip({ trait }: { trait: TftTrait }) {
   return (
     <span
       title={`${trait.displayName} (${trait.numUnits})`}
-      className="inline-flex items-center gap-0.5 h-[22px] pl-0.5 pr-1 rounded-[4px] border bg-[#25262c] text-[11px] font-semibold text-[#d7d8dc]"
+      className="inline-flex items-center gap-1 h-6 pl-1 pr-1.5 rounded-[4px] border bg-[#25262c] text-xs font-semibold text-[#d7d8dc]"
       style={{ borderColor: TRAIT_STYLE_COLORS[trait.style] ?? "#5c5f6a" }}
     >
-      {trait.icon && <img src={trait.icon} alt={trait.displayName} className="w-4 h-4" />}
+      {trait.icon && <img src={trait.icon} alt={trait.displayName} className="w-[18px] h-[18px]" />}
       {trait.numUnits}
     </span>
   );
 }
 
+const ITEM_SIZE = 18;
+
 function UnitIcon({ unit, size }: { unit: TftUnit; size: number }) {
   return (
-    <div className="flex flex-col items-center" style={{ width: size }} title={unit.name}>
+    <div className="flex flex-col items-center shrink-0" style={{ width: size }} title={unit.name}>
       <div
-        className="h-3 leading-3 text-[11px] tracking-[-1px]"
-        style={{ color: unit.tier >= 3 ? "#f2c14e" : "#cfd6de" }}
+        className="h-4 leading-4 text-[13px] tracking-[-1px]"
+        style={{ color: unit.tier >= 3 ? "#f2c14e" : "#a9c4e0" }}
       >
         {unit.tier >= 2 ? "★".repeat(unit.tier) : ""}
       </div>
@@ -110,7 +112,11 @@ function UnitIcon({ unit, size }: { unit: TftUnit; size: number }) {
       >
         {unit.icon && <img src={unit.icon} alt={unit.name} className="w-full h-full object-cover" />}
       </div>
-      <div className="flex -mt-2.5 h-4 gap-px">
+      {/* Items sit in normal flow so they're never clipped; only the top third tucks under the portrait. */}
+      <div
+        className="relative flex justify-center"
+        style={{ height: ITEM_SIZE, marginTop: -Math.round(ITEM_SIZE / 3) }}
+      >
         {unit.items.map((item, i) =>
           item.icon ? (
             <img
@@ -118,7 +124,8 @@ function UnitIcon({ unit, size }: { unit: TftUnit; size: number }) {
               src={item.icon}
               alt={item.displayName}
               title={item.displayName}
-              className="w-4 h-4 rounded-[2px] border border-black/70"
+              className="rounded-[3px] border border-black/80 bg-[#17181c]"
+              style={{ width: ITEM_SIZE, height: ITEM_SIZE }}
             />
           ) : null
         )}
@@ -129,13 +136,13 @@ function UnitIcon({ unit, size }: { unit: TftUnit; size: number }) {
 
 function Board({ player, unitSize }: { player: TftLobbyPlayer; unitSize: number }) {
   return (
-    <div className="flex flex-col gap-1.5 min-w-0">
-      <div className="flex flex-wrap gap-1">
+    <div className="flex flex-col gap-2 min-w-0">
+      <div className="flex flex-wrap gap-1.5">
         {player.traits.map((t) => (
           <TraitChip key={t.name} trait={t} />
         ))}
       </div>
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-x-2.5 gap-y-1">
         {player.units.map((u, i) => (
           <UnitIcon key={`${u.characterId}-${i}`} unit={u} size={unitSize} />
         ))}
@@ -160,7 +167,7 @@ function Avatar({ src, level, size }: { src: string | null; level: number; size:
 function LobbyStats({ player, maxBoardValue }: { player: TftLobbyPlayer; maxBoardValue: number }) {
   const pct = maxBoardValue > 0 ? (player.boardValue / maxBoardValue) * 100 : 0;
   return (
-    <div className="flex flex-col gap-1.5 w-16 shrink-0 text-[13px] text-[#d7d8dc]">
+    <div className="flex flex-col gap-2 w-20 shrink-0 text-sm text-[#d7d8dc]">
       <div className="flex items-center gap-1.5" title="Jugadores eliminados">
         <SwordsIcon />
         {player.playersEliminated}
@@ -189,7 +196,7 @@ function LobbyRow({
 }) {
   return (
     <div
-      className={`flex items-center gap-3 px-3 py-2.5 border-l-[3px] ${tracked ? "bg-[#2a2b31]" : "bg-[#1f2025]"}`}
+      className={`flex items-center gap-4 px-4 py-3.5 border-l-[3px] ${tracked ? "bg-[#2a2b31]" : "bg-[#1f2025]"}`}
       style={{ borderLeftColor: tracked ? placementColor(player.placement) : "transparent" }}
     >
       <span
@@ -198,8 +205,8 @@ function LobbyRow({
       >
         {player.placement}
       </span>
-      <Avatar src={player.avatar} level={player.level} size={52} />
-      <div className="w-40 shrink-0 min-w-0">
+      <Avatar src={player.avatar} level={player.level} size={60} />
+      <div className="w-44 shrink-0 min-w-0">
         <p
           className="truncate text-sm font-semibold"
           style={{ color: tracked ? "#e8b857" : "#e6e6e6" }}
@@ -212,7 +219,7 @@ function LobbyRow({
         </p>
       </div>
       <LobbyStats player={player} maxBoardValue={maxBoardValue} />
-      <Board player={player} unitSize={44} />
+      <Board player={player} unitSize={52} />
     </div>
   );
 }
@@ -230,7 +237,7 @@ function MatchCard({ match, trackedPuuid }: { match: TftMatch; trackedPuuid: str
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center gap-3 px-3 py-3 text-left border-l-4 hover:bg-[#25262c] transition"
+        className="w-full flex items-center gap-4 px-4 py-3.5 text-left border-l-4 hover:bg-[#25262c] transition"
         style={{ borderLeftColor: color }}
       >
         <div className="w-24 shrink-0">
@@ -244,7 +251,7 @@ function MatchCard({ match, trackedPuuid }: { match: TftMatch; trackedPuuid: str
           </p>
         </div>
         <div className="flex flex-col items-center gap-1 w-20 shrink-0">
-          <Avatar src={tracked.avatar} level={tracked.level} size={56} />
+          <Avatar src={tracked.avatar} level={tracked.level} size={60} />
           {match.lpChange !== null && (
             <span
               className={`text-xs font-bold ${match.lpChange >= 0 ? "text-[#4fd18b]" : "text-[#f0626b]"}`}
@@ -256,7 +263,7 @@ function MatchCard({ match, trackedPuuid }: { match: TftMatch; trackedPuuid: str
         </div>
         <LobbyStats player={tracked} maxBoardValue={maxBoardValue} />
         <div className="flex-1 min-w-0">
-          <Board player={tracked} unitSize={44} />
+          <Board player={tracked} unitSize={52} />
         </div>
         <svg
           viewBox="0 0 24 24"
@@ -304,7 +311,7 @@ export default function TftMatchList({
     return <p className="text-white/40 px-1">Sin partidas ranked recientes</p>;
   }
   return (
-    <div className="flex flex-col gap-2 min-w-[820px]">
+    <div className="flex flex-col gap-3 min-w-[960px]">
       {matches.map((m) => (
         <MatchCard key={m.matchId} match={m} trackedPuuid={trackedPuuid} />
       ))}
