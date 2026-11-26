@@ -53,6 +53,7 @@ export default function Home() {
   const [statsMap, setStatsMap] = useState<Record<string, Stats>>({});
   const [errorMap, setErrorMap] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   // Separate from an empty roster: the players list request itself failed
   // (e.g. Redis is over its request quota). Showing "no players yet" in that
   // case would be misleading, so it's tracked and hidden separately.
@@ -115,10 +116,48 @@ export default function Home() {
           }
           setStatsMap(nextStats);
           setErrorMap(nextErrors);
+          return list;
         })
         .finally(() => setLoading(false));
 
-    loadAll();
+    // Opening or reloading the page asks the server to check Riot right away
+    // instead of waiting for the cron. It runs after the first load so the two
+    // never compute the same player at once, and only changed players are re-read.
+    const refreshNow = async (list: Player[]) => {
+      setRefreshing(true);
+      const res = await fetch("/api/refresh?game=lol", { method: "POST" });
+      const { updated = [] } = (await res.json()) as { updated?: string[] };
+      for (const p of list.filter((player) => updated.includes(player.id))) {
+        const d = await fetch(`/api/stats?puuid=${p.puuid}&region=${p.region}`).then((r) =>
+          r.json()
+        );
+        if (d.error) continue;
+        const fresh = d as NonNullable<Stats>;
+        setStatsMap((prev) => {
+          const prevStats = prev[p.id];
+          // Keep any extra history pages the viewer already loaded.
+          if (!prevStats || prevStats.matches.length <= fresh.matches.length) {
+            return { ...prev, [p.id]: fresh };
+          }
+          const freshIds = new Set(fresh.matches.map((m) => m.matchId));
+          const older = prevStats.matches.filter((m) => !freshIds.has(m.matchId));
+          return {
+            ...prev,
+            [p.id]: {
+              ...fresh,
+              matches: [...fresh.matches, ...older],
+            },
+          };
+        });
+        setErrorMap((prev) => ({ ...prev, [p.id]: null }));
+      }
+    };
+
+    loadAll()
+      .then((list) => (list ? refreshNow(list) : undefined))
+      // A failed refresh just leaves the cached data on screen.
+      .catch(() => {})
+      .finally(() => setRefreshing(false));
     let lastLoad = Date.now();
     const interval = setInterval(() => {
       if (document.hidden) return;
@@ -214,7 +253,7 @@ export default function Home() {
           </a>
         </div>
         <p className="text-white/40 mb-2">Progreso del grupo en el SoloQ Challenge</p>
-        <NextUpdateTimer intervalMs={POLL_MS} />
+        <NextUpdateTimer intervalMs={POLL_MS} refreshing={refreshing} />
 
         <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <input

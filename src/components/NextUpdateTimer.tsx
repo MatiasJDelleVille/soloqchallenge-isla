@@ -10,10 +10,16 @@ import { useEffect, useState } from "react";
  *
  * Counts down to the next fixed clock boundary (e.g. every 10 min lands on
  * :00/:10/:20/...) instead of "intervalMs since this browser's last fetch",
- * so an F5 — which still happily reads the shared cache, no Riot calls
- * involved — doesn't push the displayed countdown back out.
+ * so a reload doesn't push the displayed countdown back out. While the check a
+ * page load triggers is still running, it says so instead.
  */
-export default function NextUpdateTimer({ intervalMs }: { intervalMs: number }) {
+export default function NextUpdateTimer({
+  intervalMs,
+  refreshing = false,
+}: {
+  intervalMs: number;
+  refreshing?: boolean;
+}) {
   // Starts null so the server-rendered markup (no "now" to count down from)
   // matches the client's first render; the effect below then starts ticking.
   const [now, setNow] = useState<number | null>(null);
@@ -32,7 +38,9 @@ export default function NextUpdateTimer({ intervalMs }: { intervalMs: number }) 
 
   return (
     <p className="text-white/30 text-sm mb-6">
-      Próxima actualización en {minutes}:{seconds.toString().padStart(2, "0")}
+      {refreshing
+        ? "Buscando partidas nuevas…"
+        : `Próxima actualización en ${minutes}:${seconds.toString().padStart(2, "0")}`}
     </p>
   );
 }

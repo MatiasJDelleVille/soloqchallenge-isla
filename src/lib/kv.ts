@@ -76,6 +76,19 @@ export async function setRefreshState(game: "lol" | "tft", state: RefreshState):
   await redis.set(`cron-state:${game}`, state);
 }
 
+/**
+ * Claims the right to refresh one game's roster. False when another run (cron or
+ * a page load) started less than cooldownSeconds ago. This single SET is what
+ * keeps reloading the page from multiplying Riot calls and Redis traffic.
+ */
+export async function claimRefresh(
+  game: "lol" | "tft",
+  cooldownSeconds: number
+): Promise<boolean> {
+  const result = await redis.set(`refresh-lock:${game}`, 1, { nx: true, ex: cooldownSeconds });
+  return result === "OK";
+}
+
 export async function getPlayers(key: string): Promise<Player[]> {
   const list = await getList(key);
   return list.slice().sort((a, b) => a.created_at.localeCompare(b.created_at));
